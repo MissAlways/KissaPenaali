@@ -1,37 +1,38 @@
 package bean;
 
 public class PostinumeroAlue {
-	private String postinro;
+	private int postinro;
 	private String postitmp;
 	
 	public PostinumeroAlue()
 	{
-		postinro=postitmp= null;
+		postinro=0;
+		postitmp = "";
 	}
-	public PostinumeroAlue(String postinro, String postitmp)
-	{
-		this.setPostinro(postinro);
-		this.setPostitmp(postitmp);
+	
+	public PostinumeroAlue(int postinro, String postitmp) {
+		super();
+		this.postinro = postinro;
+		this.postitmp = postitmp;
 	}
-	public String getPostinro() {
+
+	public int getPostinro() {
 		return postinro;
-	}
-	public void setPostinro(String postinro) {
-		this.postinro = null;
-		if(postinro!= null  && postinro.trim().matches("\\d{5}") )
-			this.postinro = postinro.trim();
 	}
 	public String getPostitmp() {
 		return postitmp;
 	}
 	public void setPostitmp(String postitmp) {
-		this.postitmp = null;
-		if (postitmp != null && postitmp.trim().length() > 0)
-			this.postitmp = postitmp.trim().toUpperCase();
+		this.postitmp = postitmp;
+	}
+	public void setPostinro(int postinro) {
+		this.postinro = postinro;
+	}
+
+	@Override
+	public String toString() {
+		return "PostinumeroAlue [postinro=" + postinro + ", postitmp="
+				+ postitmp + "]";
 	}
 	
-	public String toString()
-	{
-		return postinro + " " + postitmp;
-	}
 }
