@@ -4,8 +4,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-
-import com.mysql.jdbc.Statement;
+import java.sql.Statement;
 
 public class DataAccessObject {
 	protected Connection getConnection() throws IOException {
