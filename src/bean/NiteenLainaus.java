@@ -3,48 +3,39 @@ package bean;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-
-
 public class NiteenLainaus {
 	private Nide nide;
 	private Date palautusPvm;
 	
-	public NiteenLainaus()
-	{
-		super();
-		palautusPvm = null;
-		nide = null;
-	}
-	public NiteenLainaus(Nide nide, Date palautuspvm)
-	{
+	public NiteenLainaus(Nide nide, Date palautusPvm) {
 		this.nide = nide;
-		this.setPalautusPvm (palautuspvm);
+		this.palautusPvm = palautusPvm;
 	}
+
+	public NiteenLainaus() {
+		nide = null;
+		palautusPvm = null;
+	}
+
 	public Nide getNide() {
 		return nide;
 	}
+
 	public void setNide(Nide nide) {
 		this.nide = nide;
 	}
+
 	public Date getPalautusPvm() {
-		Date apu = null;
-		
-		if (palautusPvm != null)
-			apu = (Date) palautusPvm.clone();
-		return apu;
+		return palautusPvm;
 	}
+
 	public void setPalautusPvm(Date palautusPvm) {
-		this.palautusPvm = null;
-		if (palautusPvm != null)
-			this.palautusPvm = (Date) palautusPvm.clone();
+		this.palautusPvm = palautusPvm;
 	}
-	public String toString()
-	{
-		SimpleDateFormat f = new SimpleDateFormat("dd.MM.yyyy");
-		String pvm="";
-		if ( palautusPvm != null)
-			pvm = f.format(palautusPvm);
-		return nide + " " + pvm;
+
+	@Override
+	public String toString() {
+		return "NiteenLainaus [nide=" + nide + ", palautusPvm=" + palautusPvm + "]";
 	}
-	
+
 }
