@@ -67,7 +67,7 @@ public class LainausDao extends DataAccessObject {
 
 				asiakas.setEtunimi(rst.getString("a.sukunimi"));
 				asiakas.setNumero(rst.getInt("l.asnumero"));
-				asiakas.setOsoite(rst.getString("k.isbn"));
+				asiakas.setOsoite(rst.getString("a.osoite"));
 				asiakas.setPosti(postinumeroAlue);
 				asiakas.setSukunimi(rst.getString("a.sukunimi"));
 
