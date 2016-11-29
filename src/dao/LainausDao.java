@@ -3,6 +3,8 @@ package dao;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.util.ArrayList;
+import java.util.List;
 
 import bean.Asiakas;
 import bean.Kirja;
@@ -14,15 +16,54 @@ import bean.PostinumeroAlue;
 public class LainausDao extends DataAccessObject {
 
 	// haeKaikkiLainausNumerot
+	/* kun käyttäjä ottaa yhteyttä järjestelmään, kannasta haetaan kaikki lainausnumerot ja tuodaan näytölle */
+	public List<Lainaus> haeKaikkiLainausNumerot(){
+		Connection connection = null; // nollataan tietoja
+		PreparedStatement statement = null;
+		ResultSet rst = null;
+		List<Lainaus> lainausLista = new ArrayList<Lainaus>();
+			
+		try {
+			connection = getConnection(); // yhteys avataan tietokantaan
+			connection.setAutoCommit(false); // otetaan auto committi pois &
+												// transaktio alkaa
+			connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+			// sql lause joka hakee kaikki tietyn lainauksen tiedot
+			String sql = "SELECT l.lainausnro FROM LAINAUS l;";
+			statement = connection.prepareStatement(sql);;
+			rst = statement.executeQuery();
+			
+			while(rst.next()){
+				Lainaus lainaus = new Lainaus();
+				lainaus.setNumero(rst.getInt("l.lainausnro"));
+				lainausLista.add(lainaus);
+			}
+			
+			connection.commit(); // transaktion varmistus
 
+		} catch (Exception e) {
+			try {
+				connection.rollback(); // transaktion perutus
+			} catch (Exception e2) {
+				e.printStackTrace();
+			}
+		} finally {
+			close(statement, connection);
+			
+		}
+		
+		
+		return lainausLista;
+	}
+	
 	// haeLainaus
+	/* kun käyttäjä valitsee yhden lainausnumeron, ko. lainaus haetaan tietokannasta ja tuodaan täydellisenä näytölle */
 	public Lainaus haeLainaus(int lainausNro) {
 		Connection connection = null; // nollataan tietoja
 		PreparedStatement statement = null;
 		ResultSet rst = null;
 		Lainaus lainaus = new Lainaus();
 		
-
 		try {
 			connection = getConnection(); // yhteys avataan tietokantaan
 			connection.setAutoCommit(false); // otetaan auto committi pois &

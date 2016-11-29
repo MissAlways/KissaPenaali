@@ -1,3 +1,5 @@
+import java.util.List;
+
 import dao.LainausDao;
 import bean.Lainaus;
 
@@ -8,10 +10,19 @@ public class test {
 		LainausDao lainausDao = new LainausDao();
 		Lainaus lainaus = new Lainaus();
 		
-		lainaus = lainausDao.haeLainaus(1);
+		System.out.println("Hae kaikki lainausnumerot");
+		List<Lainaus> lainauslista = lainausDao.haeKaikkiLainausNumerot();
+		for(int i = 0; i < lainauslista.size(); i++){
+			lainaus = lainauslista.get(i);
+			System.out.println(lainaus.getNumero());
+		}
 		
+		
+		lainaus = lainausDao.haeLainaus(1);
+		System.out.println("Hae kaikki tiedot yhdestä lainauksesta");
 		System.out.println(lainaus.toString());
 
+		
 	}
 
 }

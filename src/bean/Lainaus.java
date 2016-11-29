@@ -12,7 +12,7 @@ public class Lainaus {
 
 	public Lainaus() {
 		numero = 0;
-		lainausPvm = new Date();
+		lainausPvm = null;
 		lainaaja = null;
 		lista = null;
 	}
