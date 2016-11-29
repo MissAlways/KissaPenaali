@@ -22,7 +22,12 @@ public class test {
 		System.out.println("Hae kaikki tiedot yhdestä lainauksesta");
 		System.out.println(lainaus.toString());
 
-		
+		System.out.println("Hae kaikki");
+		lainauslista = lainausDao.haeKaikki();
+		for(int i = 0; i < lainauslista.size(); i++){
+			lainaus = lainauslista.get(i);
+			System.out.println(lainaus);
+		}
 	}
 
 }
