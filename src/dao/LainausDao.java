@@ -17,11 +17,11 @@ public class LainausDao extends DataAccessObject {
 
 	// haeKaikkiLainausNumerot
 	/* kun käyttäjä ottaa yhteyttä järjestelmään, kannasta haetaan kaikki lainausnumerot ja tuodaan näytölle */
-	public List<Lainaus> haeKaikkiLainausNumerot(){
+	public List<Integer> haeKaikkiLainausNumerot(){
 		Connection connection = null; // nollataan tietoja
 		PreparedStatement statement = null;
 		ResultSet rst = null;
-		List<Lainaus> lainausLista = new ArrayList<Lainaus>();
+		List<Integer> lainausLista = new ArrayList<Integer>();
 			
 		try {
 			connection = getConnection(); // yhteys avataan tietokantaan
@@ -34,9 +34,9 @@ public class LainausDao extends DataAccessObject {
 			rst = statement.executeQuery();
 			
 			while(rst.next()){
-				Lainaus lainaus = new Lainaus();
-				lainaus.setNumero(rst.getInt("l.lainausnro"));
-				lainausLista.add(lainaus);
+				int nro;
+				nro = rst.getInt("l.lainausnro");
+				lainausLista.add(nro);
 			}
 			
 			connection.commit(); // transaktion varmistus
@@ -106,7 +106,7 @@ public class LainausDao extends DataAccessObject {
 
 				Asiakas asiakas = new Asiakas();
 
-				asiakas.setEtunimi(rst.getString("a.sukunimi"));
+				asiakas.setEtunimi(rst.getString("a.etunimi"));
 				asiakas.setNumero(rst.getInt("l.asnumero"));
 				asiakas.setOsoite(rst.getString("a.osoite"));
 				asiakas.setPosti(postinumeroAlue);
@@ -179,7 +179,7 @@ public class LainausDao extends DataAccessObject {
 
 				Asiakas asiakas = new Asiakas();
 
-				asiakas.setEtunimi(rst.getString("a.sukunimi"));
+				asiakas.setEtunimi(rst.getString("a.etunimi"));
 				asiakas.setNumero(rst.getInt("l.asnumero"));
 				asiakas.setOsoite(rst.getString("a.osoite"));
 				asiakas.setPosti(postinumeroAlue);
