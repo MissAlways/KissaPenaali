@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.List;
 
 import dao.LainausDao;
@@ -11,13 +12,13 @@ public class test {
 		Lainaus lainaus = new Lainaus();
 		
 		System.out.println("Hae kaikki lainausnumerot");
-		List<Lainaus> lainauslista = lainausDao.haeKaikkiLainausNumerot();
-		for(int i = 0; i < lainauslista.size(); i++){
-			lainaus = lainauslista.get(i);
-			System.out.println(lainaus.getNumero());
+		List<Integer> lainausNrolista = lainausDao.haeKaikkiLainausNumerot();
+		for(int i = 0; i < lainausNrolista.size(); i++){
+			int nro = lainausNrolista.get(i);
+			System.out.println(nro);
 		}
 		
-		
+		List<Lainaus> lainauslista = new ArrayList<Lainaus>();
 		lainaus = lainausDao.haeLainaus(1);
 		System.out.println("Hae kaikki tiedot yhdestä lainauksesta");
 		System.out.println(lainaus.toString());
