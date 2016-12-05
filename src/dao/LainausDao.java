@@ -252,19 +252,19 @@ public class LainausDao extends DataAccessObject {
 
 			while (rst.next()) {
 				Kirja kirja = new Kirja();
-				
+
 				kirja.setIsbn(rst.getString("isbn"));
 				kirja.setKirjoittaja(rst.getString("kirjoittaja"));
 				kirja.setKustantaja(rst.getString("kustantaja"));
 				kirja.setNimi(rst.getString("nimi"));
 				kirja.setPainos(rst.getInt("painos"));
-				
+
 				Nide nide = new Nide();
 				nide.setKirja(kirja);
 				nide.setNidenro(rst.getInt("nidenro"));
-				
+
 				kirjat.add(nide);
-				
+
 			}
 			connection.commit(); // transaktion varmistus
 		} catch (Exception e) {
@@ -273,12 +273,13 @@ public class LainausDao extends DataAccessObject {
 			} catch (Exception e2) {
 				e.printStackTrace();
 			}
-		}finally {
+		} finally {
 			close(statement, connection);
 		}
 
 		return kirjat;
 	}
+
 	public List<Asiakas> haeAsiakkaat() {
 		Connection connection = null; // nollataan tietoja
 		PreparedStatement statement = null;
@@ -288,7 +289,7 @@ public class LainausDao extends DataAccessObject {
 			connection = getConnection();
 			connection.setAutoCommit(false);
 			connection
-			.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+					.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			String sql = "SELECT numero, etunimi, sukunimi FROM ASIAKAS;";
 			statement = connection.prepareStatement(sql);
 			rst = statement.executeQuery();
@@ -307,9 +308,52 @@ public class LainausDao extends DataAccessObject {
 			} catch (Exception e2) {
 				e.printStackTrace();
 			}
-		}finally {
+		} finally {
 			close(statement, connection);
 		}
 		return asiakkaat;
+	}
+
+	public void lisaaLainaus(Lainaus lainaus) {
+		Connection connection = null; // nollataan tietoja
+		PreparedStatement statement = null;
+
+		try {
+			connection = getConnection(); // yhteys avataan tietokantaan
+			connection.setAutoCommit(false); // otetaan auto committi pois &
+												// transaktio alkaa
+			connection
+					.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			// sql lause joka lisaaLainauksen
+			String sqlLainaus = "INSERT INTO LAINAUS (asnumero, lainauspvm) VALUES (?,?);";
+			statement = connection.prepareStatement(sqlLainaus);
+			statement.setInt(1, lainaus.getLainaaja().getNumero());
+			java.sql.Date sqlLainausPvm = new java.sql.Date(lainaus
+					.getLainausPvm().getTime());
+			statement.setDate(2, sqlLainausPvm);
+			statement.executeUpdate();
+
+			String sqlNiteenLainaus = "INSERT INTO NITEENLAINAUS (lainausnro, isbn, nidenro) VALUES (?,?,?);";
+			for (int i = 0; i < lainaus.getLista().size(); i++) {
+				statement = connection.prepareStatement(sqlNiteenLainaus);
+				statement.setInt(1, lainaus.getNumero());
+				statement.setString(2, lainaus.getNiteenLainaus(i).getNide()
+						.getKirja().getIsbn());
+				statement.setInt(3, lainaus.getNiteenLainaus(i).getNide()
+						.getNidenro());
+				statement.executeUpdate();
+			}
+
+			connection.commit();
+
+		} catch (Exception e) {
+			try {
+				connection.rollback(); // transaktion perutus
+			} catch (Exception e2) {
+				e.printStackTrace();
+			}
+		} finally {
+			close(statement, connection);
+		}
 	}
 }
