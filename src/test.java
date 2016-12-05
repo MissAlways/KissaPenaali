@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import dao.LainausDao;
+import bean.Asiakas;
 import bean.Lainaus;
 import bean.Nide;
 
@@ -37,7 +38,12 @@ public class test {
 			Nide nide = kirjat.get(i);
 			System.out.println(nide);
 		}
-		
+		System.out.println("Hae asiakkaat");
+		List<Asiakas> asiakkaat = lainausDao.haeAsiakkaat();
+		for (int i = 0; i < asiakkaat.size(); i++) {
+			Asiakas asiakas = asiakkaat.get(i);
+			System.out.println(asiakas);
+		}
 	}
 
 }

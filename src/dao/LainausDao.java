@@ -279,5 +279,37 @@ public class LainausDao extends DataAccessObject {
 
 		return kirjat;
 	}
+	public List<Asiakas> haeAsiakkaat() {
+		Connection connection = null; // nollataan tietoja
+		PreparedStatement statement = null;
+		ResultSet rst = null;
+		List<Asiakas> asiakkaat = new ArrayList<Asiakas>();
+		try {
+			connection = getConnection();
+			connection.setAutoCommit(false);
+			connection
+			.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+			String sql = "SELECT numero, etunimi, sukunimi FROM ASIAKAS;";
+			statement = connection.prepareStatement(sql);
+			rst = statement.executeQuery();
 
+			while (rst.next()) {
+				Asiakas asiakas = new Asiakas();
+				asiakas.setEtunimi(rst.getString("etunimi"));
+				asiakas.setSukunimi(rst.getString("sukunimi"));
+				asiakas.setNumero(rst.getInt("numero"));
+				asiakkaat.add(asiakas);
+			}
+			connection.commit();
+		} catch (Exception e) {
+			try {
+				connection.rollback(); // transaktion perutus
+			} catch (Exception e2) {
+				e.printStackTrace();
+			}
+		}finally {
+			close(statement, connection);
+		}
+		return asiakkaat;
+	}
 }

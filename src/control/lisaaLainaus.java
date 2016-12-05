@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import bean.Asiakas;
 import bean.Nide;
 import dao.LainausDao;
 
@@ -40,7 +41,8 @@ public class lisaaLainaus extends HttpServlet {
 		List<Nide> kirjat =lainausDao.haeKaikkiVapaatKirjat();
 		request.setAttribute("kirjat", kirjat);
 		
-		
+		List<Asiakas> asiakkaat = lainausDao.haeAsiakkaat();
+		request.setAttribute("asiakkaat", asiakkaat);
 		
 		jsp.forward(request, response);
 	}
