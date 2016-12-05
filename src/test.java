@@ -3,6 +3,7 @@ import java.util.List;
 
 import dao.LainausDao;
 import bean.Lainaus;
+import bean.Nide;
 
 
 public class test {
@@ -29,6 +30,14 @@ public class test {
 			lainaus = lainauslista.get(i);
 			System.out.println(lainaus);
 		}
+		
+		System.out.println("Hae kaikki vapaat kirjat");
+		List<Nide> kirjat = lainausDao.haeKaikkiVapaatKirjat();
+		for(int i = 0; i < kirjat.size(); i++){
+			Nide nide = kirjat.get(i);
+			System.out.println(nide);
+		}
+		
 	}
 
 }
