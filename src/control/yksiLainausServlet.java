@@ -38,7 +38,6 @@ public class yksiLainausServlet extends HttpServlet {
 		
 		LainausDao lainausDao = new LainausDao();
 		int lainausNro = Integer.parseInt(request.getParameter("lainausnumero"));
-		System.out.println(lainausNro);
 		Lainaus lainaus = lainausDao.haeLainaus(lainausNro);
 		
 		request.setAttribute("lainaus", lainaus);
