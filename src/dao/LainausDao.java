@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.sun.org.apache.regexp.internal.recompile;
@@ -32,8 +33,7 @@ public class LainausDao extends DataAccessObject {
 			connection = getConnection(); // yhteys avataan tietokantaan
 			connection.setAutoCommit(false); // otetaan auto committi pois &
 												// transaktio alkaa
-			connection
-					.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+			connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			// sql lause joka hakee kaikki tietyn lainauksen tiedot
 			String sql = "SELECT l.lainausnro FROM LAINAUS l;";
 			statement = connection.prepareStatement(sql);
@@ -77,8 +77,7 @@ public class LainausDao extends DataAccessObject {
 			connection = getConnection(); // yhteys avataan tietokantaan
 			connection.setAutoCommit(false); // otetaan auto committi pois &
 												// transaktio alkaa
-			connection
-					.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+			connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			// sql lause joka hakee kaikki tietyn lainauksen tiedot
 			String sql = "SELECT l.lainausnro, l.lainausPvm, l.asnumero, a.etunimi, a.sukunimi, "
 					+ "a.osoite, a.postinro, p.postitmp, k.isbn, k.nimi, k.kirjoittaja, k.painos, "
@@ -157,8 +156,7 @@ public class LainausDao extends DataAccessObject {
 			connection = getConnection(); // yhteys avataan tietokantaan
 			connection.setAutoCommit(false); // otetaan auto committi pois &
 												// transaktio alkaa
-			connection
-					.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+			connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			// sql lause joka hakee kaikki tietyn lainauksen tiedot
 			String sql = "SELECT l.lainausnro, l.lainausPvm, l.asnumero, a.etunimi, a.sukunimi, "
 					+ "a.osoite, a.postinro, p.postitmp, k.isbn, k.nimi, k.kirjoittaja, k.painos, "
@@ -240,13 +238,12 @@ public class LainausDao extends DataAccessObject {
 			connection = getConnection(); // yhteys avataan tietokantaan
 			connection.setAutoCommit(false); // otetaan auto committi pois &
 												// transaktio alkaa
-			connection
-					.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+			connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			// sql lause joka hakee kaikki vapaat kirjat
 			String sql = "SELECT isbn, nimi, kirjoittaja, painos, kustantaja, nidenro "
 					+ "FROM KIRJA NATURAL JOIN NIDE WHERE NOT EXISTS ( "
 					+ "SELECT * FROM NITEENLAINAUS WHERE NITEENLAINAUS.isbn=KIRJA.isbn "
-					+ "AND NITEENLAINAUS.nidenro=NIDE.nidenro AND palautuspvm IS NULL); ";
+					+ "AND NITEENLAINAUS.nidenro=NIDE.nidenro AND palautuspvm IS NOT NULL); ";
 			statement = connection.prepareStatement(sql);
 			rst = statement.executeQuery();
 
@@ -288,8 +285,7 @@ public class LainausDao extends DataAccessObject {
 		try {
 			connection = getConnection();
 			connection.setAutoCommit(false);
-			connection
-					.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+			connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
 			String sql = "SELECT numero, etunimi, sukunimi FROM ASIAKAS;";
 			statement = connection.prepareStatement(sql);
 			rst = statement.executeQuery();
@@ -322,14 +318,12 @@ public class LainausDao extends DataAccessObject {
 			connection = getConnection(); // yhteys avataan tietokantaan
 			connection.setAutoCommit(false); // otetaan auto committi pois &
 												// transaktio alkaa
-			connection
-					.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
+			connection.setTransactionIsolation(Connection.TRANSACTION_SERIALIZABLE);
 			// sql lause joka lisaaLainauksen
 			String sqlLainaus = "INSERT INTO LAINAUS (asnumero, lainauspvm) VALUES (?,?);";
 			statement = connection.prepareStatement(sqlLainaus);
 			statement.setInt(1, lainaus.getLainaaja().getNumero());
-			java.sql.Date sqlLainausPvm = new java.sql.Date(lainaus
-					.getLainausPvm().getTime());
+			java.sql.Date sqlLainausPvm = new java.sql.Date(lainaus.getLainausPvm().getTime());
 			statement.setDate(2, sqlLainausPvm);
 			statement.executeUpdate();
 
@@ -337,10 +331,8 @@ public class LainausDao extends DataAccessObject {
 			for (int i = 0; i < lainaus.getLista().size(); i++) {
 				statement = connection.prepareStatement(sqlNiteenLainaus);
 				statement.setInt(1, lainaus.getNumero());
-				statement.setString(2, lainaus.getNiteenLainaus(i).getNide()
-						.getKirja().getIsbn());
-				statement.setInt(3, lainaus.getNiteenLainaus(i).getNide()
-						.getNidenro());
+				statement.setString(2, lainaus.getNiteenLainaus(i).getNide().getKirja().getIsbn());
+				statement.setInt(3, lainaus.getNiteenLainaus(i).getNide().getNidenro());
 				statement.executeUpdate();
 			}
 
@@ -356,4 +348,102 @@ public class LainausDao extends DataAccessObject {
 			close(statement, connection);
 		}
 	}
+
+	public Asiakas haeAsiakas(int id) {
+		Connection connection = null; // nollataan tietoja
+		PreparedStatement statement = null;
+		ResultSet rst = null;
+		Asiakas asiakas = new Asiakas();
+
+		try {
+			connection = getConnection(); // yhteys avataan tietokantaan
+			connection.setAutoCommit(false); // otetaan auto committi pois &
+												// transaktio alkaa
+			connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+			// sql lause joka hakee kaikki tietyn asiakkaan tiedot
+			String sql = "SELECT a.numero, a.etunimi, a.sukunimi, a.osoite, p.postinro, p.postitmp FROM ASIAKAS a JOIN POSTINUMEROALUE p ON a.postinro = p.postinro WHERE numero = ?;";
+			statement = connection.prepareStatement(sql);
+			statement.setInt(1, id);
+			rst = statement.executeQuery();
+
+			if (rst.next()) {
+				PostinumeroAlue pa = new PostinumeroAlue();
+				pa.setPostinro(rst.getInt("p.postinro"));
+				pa.setPostitmp(rst.getString("p.postitmp"));
+
+				asiakas.setEtunimi(rst.getString("a.etunimi"));
+				asiakas.setNumero(rst.getInt("a.numero"));
+				asiakas.setOsoite(rst.getString("a.osoite"));
+				asiakas.setPosti(pa);
+				asiakas.setSukunimi(rst.getString("a.sukunimi"));
+			}
+			connection.commit(); // transaktion varmistus
+
+		} catch (Exception e) {
+			try {
+				connection.rollback(); // transaktion perutus
+			} catch (Exception e2) {
+				e.printStackTrace();
+			}
+		} finally {
+			close(statement, connection);
+
+		}
+
+		return asiakas;
+
+	}
+
+	public NiteenLainaus haeNiteenLainaus(int nidenro) {
+		Connection connection = null; // nollataan tietoja
+		PreparedStatement statement = null;
+		ResultSet rst = null;
+		NiteenLainaus nl = new NiteenLainaus();
+
+		try {
+			connection = getConnection(); // yhteys avataan tietokantaan
+			connection.setAutoCommit(false); // otetaan auto committi pois &
+												// transaktio alkaa
+			connection.setTransactionIsolation(Connection.TRANSACTION_READ_COMMITTED);
+			// sql lause joka hakee kaikki tietyn nidelainauksen tiedot
+			String sql = "SELECT k.isbn, n.nidenro, k.nimi, k.kirjoittaja, k.painos, k.kustantaja FROM NIDE n JOIN KIRJA k ON k.isbn = n.isbn WHERE n.nidenro = ?;";
+			statement = connection.prepareStatement(sql);
+			statement.setInt(1, nidenro);
+			rst = statement.executeQuery();
+
+			if (rst.next()) {
+				Kirja kirja = new Kirja();
+				kirja.setIsbn(rst.getString("k.isbn"));
+				kirja.setKirjoittaja(rst.getString("k.kirjoittaja"));
+				kirja.setKustantaja(rst.getString("k.kustantaja"));
+				kirja.setNimi(rst.getString("k.nimi"));
+				kirja.setPainos(rst.getInt("k.painos"));
+
+				Nide nide = new Nide();
+				nide.setKirja(kirja);
+				nide.setNidenro(rst.getInt("n.nidenro"));
+
+				nl.setNide(nide);
+				Date nytPlus30 = new Date();
+				nytPlus30.setTime(nytPlus30.getTime() + 30 * 1000 * 60 * 60 * 24);
+				nl.setPalautusPvm(nytPlus30);
+
+			}
+			connection.commit(); // transaktion varmistus
+
+		} catch (Exception e) {
+			try {
+				connection.rollback(); // transaktion perutus
+			} catch (Exception e2) {
+				e.printStackTrace();
+			}
+		} finally {
+			close(statement, connection);
+
+		}
+
+		return nl;
+
+	}
+
 }
