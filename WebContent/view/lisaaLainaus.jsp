@@ -11,7 +11,7 @@
 <h1>LISÄÄ LAINAUS</h1>
 <p>
 </p>
-<form action="NiteenLainausOhjelma" method="get">
+<form action="varmistus" method="get">
 Valitse Lainaaja: <select name="asiakas">
 
 <c:forEach items="${asiakkaat}" var= "asiakas">
@@ -23,7 +23,7 @@ Valitse Lainaaja: <select name="asiakas">
 </select>
 <div>
 <c:forEach items="${kirjat}" var="nide">
-<input type="checkbox" name="nide" value="${nide.kirja.isbn} ${nide.nidenro}">
+<input type="checkbox" name="nide" value="${nide.nidenro}">
 <c:out value="${nide.kirja.isbn}" /> &nbsp;
 <c:out value="${nide.nidenro}" /> &nbsp;
 <c:out value="${nide.kirja.nimi}" /> &nbsp;
