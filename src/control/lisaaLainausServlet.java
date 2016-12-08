@@ -20,7 +20,7 @@ import dao.LainausDao;
  * Servlet implementation class lisaaLainaus
  */
 @WebServlet("/lisaaLainaus")
-public class lisaaLainaus extends HttpServlet {
+public class lisaaLainausServlet extends HttpServlet {
 	private RequestDispatcher jsp;
 	private static final long serialVersionUID = 1L;
 	
